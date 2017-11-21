@@ -11,7 +11,7 @@ std::vector<double> dct(std::vector<double> &values) {
         for(int j = 0; j < values.size(); j++) {
             temp += values.at(j) * cos(M_PI / values.size() * (j + 0.5) * i);
         }
-        result.push_back(temp);
+        result.push_back(fabs(temp));
     }
 
     return result;
@@ -37,18 +37,25 @@ int main(int argc, char *argv[]) {
     std::ifstream _file(filename);
 
     if(!_file.good()) {
-        // Harten Error werfen, wird nicht passieren
+        std::cout << "sth went wront" << std::endl;
     }
 
-    std::vector<double> dct_window;
+    std::vector<double> dct_window, temp;
     std::vector<std::vector<double>> transformed;
     std::string str;
+
     int linecount = 0;
+
     while (std::getline(_file, str)) {
         dct_window.push_back(atof(str.c_str()));
         linecount ++;
+
         if (!((linecount+1) % dct_size)) {
-            transformed.push_back(dct(dct_window));
+            temp = dct(dct_window);
+            transformed.push_back(temp);
+            for(int i = 0; i < temp.size(); i++) {
+                std::cout << temp.at(i) << std::endl;
+            }
             dct_window.clear();
         }
     }
