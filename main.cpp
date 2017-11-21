@@ -9,7 +9,12 @@ std::vector<double> dct(std::vector<double> &values) {
     for(int i = 0; i < values.size(); i++) {
         double temp = 0;
         for(int j = 0; j < values.size(); j++) {
-            temp += values.at(j) * cos(M_PI / values.size() * (j + 0.5) * i);
+            temp += values.at(j) * cos((M_PI*i*(2*j+1)) / (values.size()*2));
+        }
+        if (i == 0) {
+            temp = temp * sqrt(1.0/values.size());
+        } else {
+            temp = temp * sqrt(2.0/values.size());
         }
         result.push_back(fabs(temp));
     }
