@@ -1,9 +1,16 @@
 #include <iostream>
+using std::cout;
+using std::endl;
 #include <vector>
 #include <fstream>
 #include <sstream>
 #include <cmath>
 #include <stdexcept>
+
+std::string help = "Possible arguments:\n"
+"-i: input file\n"
+"-f: sample rate\n"
+"-l: dct size";
 
 std::vector<double> dct(std::vector<double> &values) {
     std::vector<double> result;
@@ -24,6 +31,10 @@ std::vector<double> dct(std::vector<double> &values) {
 }
 
 int main(int argc, char *argv[]) {
+    if(argc < 2) {
+        cout << help << endl;
+        return 0;
+    }
 
     int sample_rate = 10000;
     std::string filename;
@@ -37,6 +48,9 @@ int main(int argc, char *argv[]) {
             sample_rate = atoi(argv[i+1]);
         } else if (arg == "-l") {
             dct_size = atoi(argv[i+1]);
+        } else if (arg == "-h") {
+            cout << help << endl;
+            return 0;
         }
     }
 
@@ -67,4 +81,6 @@ int main(int argc, char *argv[]) {
             dct_window.clear();
         }
     }
+    
+    return 0;
 }
