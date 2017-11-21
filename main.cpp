@@ -4,9 +4,6 @@
 #include <sstream>
 #include <cmath>
 
-using namespace std;
-
-
 std::vector<double> dct(std::vector<double> &values) {
     std::vector<double> result;
     for(int i = 0; i < values.size(); i++) {
@@ -27,7 +24,7 @@ int main(int argc, char *argv[]) {
     int dct_size;
 
     for(int i = 0; i < argc; i++) {
-        string arg = string(argv[i]);
+        std::string arg = std::string(argv[i]);
         if(arg == "-i") {
             filename = argv[i+1];
         } else if (arg == "-f") {
