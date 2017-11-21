@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <stdexcept>
 
 std::vector<double> dct(std::vector<double> &values) {
     std::vector<double> result;
@@ -19,9 +20,9 @@ std::vector<double> dct(std::vector<double> &values) {
 
 int main(int argc, char *argv[]) {
 
-    int sample_rate;
+    int sample_rate = 10000;
     std::string filename;
-    int dct_size;
+    int dct_size = 16;
 
     for(int i = 0; i < argc; i++) {
         std::string arg = std::string(argv[i]);
@@ -37,10 +38,10 @@ int main(int argc, char *argv[]) {
     std::ifstream _file(filename);
 
     if(!_file.good()) {
-        std::cout << "sth went wront" << std::endl;
+        throw std::runtime_error("Could not read input file");
     }
 
-    std::vector<double> dct_window, temp;
+    std::vector<double> dct_window;
     std::vector<std::vector<double>> transformed;
     std::string str;
 
@@ -48,14 +49,16 @@ int main(int argc, char *argv[]) {
 
     while (std::getline(_file, str)) {
         dct_window.push_back(atof(str.c_str()));
-        linecount ++;
+        linecount++;
 
         if (!((linecount+1) % dct_size)) {
-            temp = dct(dct_window);
+            std::vector<double> temp = dct(dct_window);
             transformed.push_back(temp);
+            
             for(int i = 0; i < temp.size(); i++) {
                 std::cout << temp.at(i) << std::endl;
             }
+            
             dct_window.clear();
         }
     }
