@@ -42,8 +42,15 @@ rm CMakeCache.txt cmake_install.cmake Makefile
 # Testrun
 ./Arduino_DCT -i ../signal_samples/squarewave -l 64 -a 4
 
+
 # gnuplot
-rm ../gnuplot/*.dat
-mv *.dat ../gnuplot/
+
+# cleanup
+rm ../gnuplot/*.dct
+rm ../gnuplot/*.signal
+# copy new files
+mv *.dct ../gnuplot/
+mv *.signal ../gnuplot/
+# start gnuplot
 cd ../gnuplot/
-./plot.sh plotting_data.dat
+./plot.sh
