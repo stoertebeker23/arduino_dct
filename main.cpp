@@ -149,8 +149,12 @@ int main(int argc, char *argv[]) {
             dct_window.clear();
         }
     }
-    
-    gnuplot_export(transformed);
-    
+
+    if(transformed.size() == 0) {
+        std::cout << "No results written, is you dct window "
+                     "longer than your file?" << std::endl;
+    } else {
+        gnuplot_export(transformed);
+    }
     return 0;
 }
