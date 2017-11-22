@@ -32,6 +32,38 @@ std::vector<double> dct(std::vector<double> &values) {
     return result;
 }
 
+std::vector<double> calc_avg(const std::vector<std::vector<double>>& history,
+                             const std::vector<double>& new_values,
+                             size_t avg_amount) {
+    std::vector<double> result(new_values);
+    
+    // If we don't have enough values yet, use what's there (+ 1 because new values)
+    avg_amount = std::min(avg_amount, history.size() + 1);
+    
+    for (int i = 0; i < avg_amount; i++) {
+        const int index = history.size() - 1 - i;
+        
+        if (index < 0 || index >= history.size()) {
+            break;
+        }
+        
+        if (history.at(index).size() != result.size()) {
+            // TODO make this an assert
+            cout << "ERROR: history and result size mismatch!" << endl;
+        }
+
+        for (int j = 0; j < result.size(); j++) {
+            result.at(j) += history.at(index).at(j);
+        }
+    }
+    
+    for(double& d : result) {
+        d /= avg_amount;
+    }
+    
+    return result;
+}
+
 int main(int argc, char *argv[]) {
     if(argc < 2) {
         cout << help << endl;
@@ -78,39 +110,21 @@ int main(int argc, char *argv[]) {
         if (linecount % dct_size == 0) {
             std::vector<double> temp = dct(dct_window);
             
-            std::vector<double> average(temp);
             if(averaging && transformed.size() > 1) {
-                // If we don't have enough values yet, use what's there
-                const int avg_amount = std::min((size_t)averaging, transformed.size());
+                std::vector<double> average = calc_avg(transformed, temp, averaging);
+                transformed.push_back(average);
                 
-                for(int i = 0; i < avg_amount; i++) {
-                    const int index = transformed.size() - 1 - i;
-                    
-                    if (index < 0 || index >= transformed.size()) {
-                        break;
-                    }
-
-                    for(int j = 0; j < average.size(); j++) {
-                        average.at(j) += transformed.at(index).at(j);
-                    }
+                std::cout << "averaged" << std::endl;
+                for(int i = 0; i < average.size(); i++) {
+                    std::cout << average.at(i) << std::endl;
                 }
+            } else {
+                transformed.push_back(temp);
                 
-                for(double& d : average) {
-                    d /= avg_amount;
+                std::cout << "not averaged" << std::endl;
+                for(int i = 0; i < temp.size(); i++) {
+                    std::cout << temp.at(i) << std::endl;
                 }
-            }
-            
-            transformed.push_back(average);
-            
-            std::cout << "not averaged" << std::endl;
-            for(int i = 0; i < temp.size(); i++) {
-                std::cout << temp.at(i) << std::endl;
-
-            }
-            std::cout << "averaged" << std::endl;
-            for(int i = 0; i < average.size(); i++) {
-                std::cout << average.at(i) << std::endl;
-
             }
             
             dct_window.clear();
