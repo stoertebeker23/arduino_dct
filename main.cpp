@@ -8,10 +8,10 @@ using std::endl;
 #include <stdexcept>
 
 std::string help = "Possible arguments:\n"
-"-i: input file\n"
-"-f: sample rate\n"
-"-l: dct size"
-"-a: averaging";
+    "-i: input file\n"
+    "-f: sample rate\n"
+    "-l: dct size\n"
+    "-a: averaging\n";
 
 std::vector<double> dct(std::vector<double> &values) {
     std::vector<double> result;
@@ -75,28 +75,33 @@ int main(int argc, char *argv[]) {
         dct_window.push_back(atof(str.c_str()));
         linecount++;
 
-        if (!((linecount+1) % dct_size)) {
+        if (linecount % dct_size == 0) {
             std::vector<double> temp = dct(dct_window);
-            std::vector<double> average;
-            average = temp;
-            if(averaging) {
-                for(int i = 0; i < averaging; i++) {
-                    const int index = transformed.size()-1-i;
-                    if (i >= index) {
+            
+            std::vector<double> average(temp);
+            if(averaging && transformed.size() > 1) {
+                // If we don't have enough values yet, use what's there
+                const int avg_amount = std::min((size_t)averaging, transformed.size());
+                
+                for(int i = 0; i < avg_amount; i++) {
+                    const int index = transformed.size() - 1 - i;
+                    
+                    if (index < 0 || index >= transformed.size()) {
                         break;
                     }
 
                     for(int j = 0; j < average.size(); j++) {
                         average.at(j) += transformed.at(index).at(j);
                     }
-
                 }
+                
                 for(double& d : average) {
-                    d /= averaging;
+                    d /= avg_amount;
                 }
-
             }
+            
             transformed.push_back(average);
+            
             std::cout << "not averaged" << std::endl;
             for(int i = 0; i < temp.size(); i++) {
                 std::cout << temp.at(i) << std::endl;
@@ -110,7 +115,6 @@ int main(int argc, char *argv[]) {
             
             dct_window.clear();
         }
-
     }
     
     return 0;

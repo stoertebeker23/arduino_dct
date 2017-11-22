@@ -40,4 +40,4 @@ rm -r CMakeFiles
 rm CMakeCache.txt cmake_install.cmake Makefile
 
 # Testrun
-./Arduino_DCT
+./Arduino_DCT -i ../signal_samples/squarewave -a 4
