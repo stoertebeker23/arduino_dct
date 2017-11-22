@@ -78,7 +78,8 @@ void gnuplot_export(const vector<double>& input,
         
         int x = 0;
         for(const double d : window) {
-            dct_file << x*samplerate/(2.0*window.size()) << " " << d << "\n";
+            const double x_scaled = x * samplerate / (2.0 * window.size());
+            dct_file << x_scaled << " " << d << "\n";
             x++;
         }
         
@@ -88,7 +89,8 @@ void gnuplot_export(const vector<double>& input,
         
         x = 0;
         for(int i = 0; i < window.size(); ++i, ++input_index) {
-            signal_file << x*1/samplerate << " " << input.at(input_index) << "\n";
+            const double x_scaled = x * 1.0 / samplerate;
+            signal_file << x_scaled << " " << input.at(input_index) << "\n";
             x++;
         }
         
