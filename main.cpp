@@ -66,7 +66,8 @@ vector<double> calc_avg(const vector<vector<double>>& history,
 }
 
 void gnuplot_export(const vector<double>& input,
-                    const vector<vector<double>>& transformed) {
+                    const vector<vector<double>>& transformed,
+                    int samplerate) {
     int window_num = 0;
     int input_index = 0;
     
@@ -77,7 +78,8 @@ void gnuplot_export(const vector<double>& input,
         
         int x = 0;
         for(const double d : window) {
-            dct_file << x++ << " " << d << "\n";
+            dct_file << x*samplerate/(2.0*window.size()) << " " << d << "\n";
+            x++;
         }
         
         std::ofstream signal_file(std::to_string(window_num) + ".signal");
@@ -86,7 +88,8 @@ void gnuplot_export(const vector<double>& input,
         
         x = 0;
         for(int i = 0; i < window.size(); ++i, ++input_index) {
-            signal_file << x++ << " " << input.at(input_index) << "\n";
+            signal_file << x*1/samplerate << " " << input.at(input_index) << "\n";
+            x++;
         }
         
         window_num++;
@@ -171,7 +174,7 @@ int main(int argc, char *argv[]) {
         std::cout << "No results written, is you dct window "
                      "longer than your file?" << std::endl;
     } else {
-        gnuplot_export(transformed);
+        gnuplot_export(input, transformed, sample_rate);
     }
     
     return 0;
