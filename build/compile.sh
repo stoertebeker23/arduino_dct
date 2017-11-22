@@ -41,3 +41,5 @@ rm CMakeCache.txt cmake_install.cmake Makefile
 
 # Testrun
 ./Arduino_DCT -i ../signal_samples/squarewave -a 4
+# gnuplot
+../gnuplot/plot.sh plotting_data.dat
