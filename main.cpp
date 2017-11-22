@@ -10,7 +10,8 @@ using std::endl;
 std::string help = "Possible arguments:\n"
 "-i: input file\n"
 "-f: sample rate\n"
-"-l: dct size";
+"-l: dct size"
+"-a: averaging";
 
 std::vector<double> dct(std::vector<double> &values) {
     std::vector<double> result;
@@ -19,6 +20,7 @@ std::vector<double> dct(std::vector<double> &values) {
         for(int j = 0; j < values.size(); j++) {
             temp += values.at(j) * cos((M_PI*i*(2*j+1)) / (values.size()*2));
         }
+
         if (i == 0) {
             temp = temp * sqrt(1.0/values.size());
         } else {
@@ -39,6 +41,7 @@ int main(int argc, char *argv[]) {
     int sample_rate = 10000;
     std::string filename;
     int dct_size = 16;
+    int averaging = 0;
 
     for(int i = 0; i < argc; i++) {
         std::string arg = std::string(argv[i]);
@@ -51,6 +54,8 @@ int main(int argc, char *argv[]) {
         } else if (arg == "-h") {
             cout << help << endl;
             return 0;
+        } else if (arg == "-a") {
+            averaging = atoi(argv[i+1]);
         }
     }
 
@@ -72,14 +77,40 @@ int main(int argc, char *argv[]) {
 
         if (!((linecount+1) % dct_size)) {
             std::vector<double> temp = dct(dct_window);
-            transformed.push_back(temp);
-            
+            std::vector<double> average;
+            average = temp;
+            if(averaging) {
+                for(int i = 0; i < averaging; i++) {
+                    const int index = transformed.size()-1-i;
+                    if (i >= index) {
+                        break;
+                    }
+
+                    for(int j = 0; j < average.size(); j++) {
+                        average.at(j) += transformed.at(index).at(j);
+                    }
+
+                }
+                for(double& d : average) {
+                    d /= averaging;
+                }
+
+            }
+            transformed.push_back(average);
+            std::cout << "not averaged" << std::endl;
             for(int i = 0; i < temp.size(); i++) {
                 std::cout << temp.at(i) << std::endl;
+
+            }
+            std::cout << "averaged" << std::endl;
+            for(int i = 0; i < average.size(); i++) {
+                std::cout << average.at(i) << std::endl;
+
             }
             
             dct_window.clear();
         }
+
     }
     
     return 0;
