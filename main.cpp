@@ -12,9 +12,11 @@ std::string help = "Possible arguments:\n"
     "-i: input file\n"
     "-f: sample rate\n"
     "-l: dct size\n"
-    "-a: averaging\n";
+    "-a: averaging\n"
+    "-s: squareroot\n"
+    "-r: include inverse\n";
 
-vector<double> dct(vector<double> &values, bool invert) {
+vector<double> dct(vector<double> &values, bool invert, bool squareroot) {
     // Vector containing either spectral value or signal values
     vector<double> result;
 
@@ -45,7 +47,11 @@ vector<double> dct(vector<double> &values, bool invert) {
         } else {
             temp = temp * sqrt(2.0/values.size());
         }
-        result.push_back(fabs(temp));
+        if(squareroot) {
+            result.push_back(fabs(temp));
+         } else {
+            result.push_back(temp);
+        }
     }
     return result;
 }
@@ -126,7 +132,9 @@ int main(int argc, char *argv[]) {
     std::string filename;
     int dct_size = 16;
     int averaging = 0;
-
+    std::string format = "own";
+    bool inverse = false;
+    bool squareroot = false;
     for(int i = 0; i < argc; i++) {
         std::string arg = std::string(argv[i]);
         if(arg == "-i") {
@@ -140,6 +148,10 @@ int main(int argc, char *argv[]) {
             return 0;
         } else if (arg == "-a") {
             averaging = atoi(argv[i+1]);
+        } else if (arg == "-r") {
+            squareroot = atoi(argv[i+1]);
+        } else if (arg == "-s") {
+            inverse = atoi(argv[i+1]);
         }
     }
     
@@ -161,16 +173,18 @@ int main(int argc, char *argv[]) {
 
     vector<double> dct_window;
     vector<vector<double>> transformed;
-    vector<vector<double>> inverse;
+    vector<vector<double>> inverse_dct;
 
     for(int i = 0; i < input.size(); ++i) {
         // Read signal values to dct window...
         dct_window.push_back(input.at(i));
         // ...until window size is reached then...
         if (i > 0 && i % dct_size == 0) {
-            vector<double> temp = dct(dct_window, false);
-            vector<double> inv  = dct(temp, true);
-            
+            vector<double> temp = dct(dct_window, false, squareroot);
+            vector<double> inv;
+            if(inverse) {
+                inv = dct(temp, true, squareroot);
+            }
             if(averaging && transformed.size() > 1) {
                 vector<double> average = calc_avg(transformed, temp, averaging);
                 transformed.push_back(average);
@@ -181,17 +195,20 @@ int main(int argc, char *argv[]) {
                 }
             } else {
                 transformed.push_back(temp);
-                inverse.push_back(inv);
-                
+                if(inverse) {
+                    inverse_dct.push_back(inv);
+                }
                 // std::cout << "not averaged" << std::endl;
                 for(int i = 0; i < temp.size(); i++) {
                     std::cout << temp.at(i) << std::endl;
                 }
-                std::cout << std::endl;
-                for(int i = 0; i < temp.size(); i++) {
-                    std::cout << inv.at(i) << std::endl;
+                if(inverse) {
+                    std::cout << std::endl;
+                    for(int i = 0; i < temp.size(); i++) {
+                        std::cout << inv.at(i) << std::endl;
+                    }
+                    std::cout << std::endl;
                 }
-                std::cout << std::endl;
             }
             // clear window to fill it with new signal values
             dct_window.clear();
@@ -203,7 +220,7 @@ int main(int argc, char *argv[]) {
         std::cout << "No results written, is your dct window "
                      "longer than your file?" << std::endl;
     } else {
-        gnuplot_export(input, transformed, inverse, sample_rate);
+        gnuplot_export(input, transformed, inverse_dct, sample_rate);
     }
     
     return 0;
