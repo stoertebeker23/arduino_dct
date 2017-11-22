@@ -1,3 +1,4 @@
 build/Arduino_DCT
 build/plotting_data.dat
 CMakeLists.txt.user
+*.dat
