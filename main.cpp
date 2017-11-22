@@ -90,6 +90,10 @@ int main(int argc, char *argv[]) {
             averaging = atoi(argv[i+1]);
         }
     }
+    
+    if(averaging) {
+        cout << "averaging over " << averaging << " values" << endl;
+    }
 
     std::ifstream _file(filename);
 
@@ -114,14 +118,14 @@ int main(int argc, char *argv[]) {
                 std::vector<double> average = calc_avg(transformed, temp, averaging);
                 transformed.push_back(average);
                 
-                std::cout << "averaged" << std::endl;
+                // std::cout << "averaged" << std::endl;
                 for(int i = 0; i < average.size(); i++) {
                     std::cout << average.at(i) << std::endl;
                 }
             } else {
                 transformed.push_back(temp);
                 
-                std::cout << "not averaged" << std::endl;
+                // std::cout << "not averaged" << std::endl;
                 for(int i = 0; i < temp.size(); i++) {
                     std::cout << temp.at(i) << std::endl;
                 }
