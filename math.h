@@ -1,5 +1,6 @@
 #ifndef MATH_H
 #define MATH_H
+
 vector<double> dct(vector<double> &values, bool invert, bool squareroot) {
     // Vector containing either spectral value or signal values
     vector<double> result;
@@ -15,27 +16,23 @@ vector<double> dct(vector<double> &values, bool invert, bool squareroot) {
                 temp += values.at(j) * cos((M_PI*i*(2*j+1)) / (values.size()*2));
             } else {
                 // Alpha value is applied to inverse DCT inside the sum
-                double modifier;
-                if (j == 0) {
-                    modifier = sqrt(1.0/values.size());
-                } else {
-                    modifier = sqrt(2.0/values.size());
-                }
-                temp += modifier *
-                        values.at(j) * cos((M_PI*j*(2*i+1)) / (values.size()*2));
+                const double numerator = (i == 0) ? 1.0 : 2.0;
+                const double modifier = sqrt(numerator / values.size());
+                const double v = cos(M_PI * j * (2 * i + 1) / (values.size() * 2));
+                temp += modifier * values.at(j) * v;
             }
         }
+        
         // Alpha value is applied outside the sum for DCT
-        if (i == 0 && !invert) {
-            temp = temp * sqrt(1.0/values.size());
-        } else {
-            temp = temp * sqrt(2.0/values.size());
-        }
+        const double numerator = (i == 0 && !invert) ? 1.0 : 2.0;
+        temp *= sqrt(numerator / values.size());
+        
+        // "squareroot"
         if(squareroot) {
-            result.push_back(fabs(temp));
-         } else {
-            result.push_back(temp);
+            temp = fabs(temp);
         }
+        
+        result.push_back(temp);
     }
     return result;
 }
@@ -71,41 +68,64 @@ vector<double> calc_avg(const vector<vector<double>>& history,
 
     return result;
 }
+
 double sinc(double x) {
-    return (sin(M_PI*x)*2*sin(M_PI*x/2)/(M_PI*M_PI*x*x));
+    return (sin(M_PI * x) * 2.0 * sin(M_PI * x / 2.0) / (M_PI * M_PI * x * x));
 }
+
 // Wow...I hope it works
-std::vector<double> lanczos (std::vector<double> values, int rfac, int size = 2) {
+std::vector<double> lanczos(std::vector<double> values, int rfac, int size = 2) {
     std::vector<double> result;
+    
+    // TODO: why pass values as argument if we clear it anyway?
     values.clear();
     for(int i = 0; i < 32; i++) {
         values.push_back(sin(i*M_PI/4));
     }
     int x = 0;
 
-    for(int i = 0; i < rfac*values.size(); i++) {
-        if (rfac <= 1) { result = values; break; }
-        if (i%rfac == 0) {
-            if(i/(rfac)-1 < 0) continue;
-            result.push_back(values.at(i/(rfac)-1));
+    for(int i = 0; i < rfac * values.size(); i++) {
+        if (rfac <= 1) {
+            result = values;
+            break;
+        }
+        
+        if (i % rfac == 0) {
+            const int index = i / rfac - 1;
+            if(index < 0) {
+                continue;
+            }
+            result.push_back(values.at(index));
             x = 0;
         } else {
-            cout << 1.0/rfac << endl;
+            cout << 1.0 / rfac << endl;
+            
             x++;
             double temp = 0;
+            
             for(int j = -size; j <= size; j++) {
-                if(!j) continue;
+                if(j == 0) {
+                    continue;
+                }
+                
+                const int index = i / rfac + j;
+                
                 if(j < 0) {
-                    if((i/rfac+j) < 0) continue;
-                    temp += values.at(i/rfac+j)*sinc(x*1.0/rfac+abs(j)-1);
+                    if(index < 0) {
+                        continue;
+                    }
+                    temp += values.at(index) * sinc(x * 1.0 / rfac + abs(j) - 1);
                 } else if(j > 0) {
-                    if(i/rfac+j-1 > values.size()-1) continue;
-                    temp += values.at(i/rfac+j-1)*sinc(abs(j)-x*1.0/rfac);
+                    if(i / rfac + j - 1 > values.size() - 1) {
+                        continue;
+                    }
+                    temp += values.at(index - 1) * sinc(abs(j) - x * 1.0 / rfac);
                 }
             }
             result.push_back(temp);
         }
     }
+    
     cout << "[";
     for(int i = 0; i < values.size(); i++) {
         cout << values.at(i) << ",";
