@@ -9,7 +9,7 @@ using std::vector;
 #include <cmath>
 #include <stdexcept>
 
-#include "math.h"
+#include "dct.h"
 #include "output.h"
 
 std::string help = "Possible arguments:\n"

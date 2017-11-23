@@ -1,5 +1,11 @@
-#ifndef MATH_H
-#define MATH_H
+#include "dct.h"
+
+#include <vector>
+using std::vector;
+#include <iostream>
+using std::cout;
+using std::endl;
+#include <cmath>
 
 vector<double> dct(vector<double> &values, bool invert, bool squareroot) {
     // Vector containing either spectral value or signal values
@@ -73,8 +79,7 @@ double sinc(double x) {
     return (sin(M_PI * x) * 2.0 * sin(M_PI * x / 2.0) / (M_PI * M_PI * x * x));
 }
 
-// Wow...I hope it works
-std::vector<double> lanczos(std::vector<double> values, int rfac, int size = 2) {
+std::vector<double> lanczos(std::vector<double> values, int rfac, int size) {
     std::vector<double> result;
     
     // TODO: why pass values as argument if we clear it anyway?
@@ -137,5 +142,3 @@ std::vector<double> lanczos(std::vector<double> values, int rfac, int size = 2) 
     cout << "];" << endl;
     return result;
 }
-
-#endif // MATH_H
