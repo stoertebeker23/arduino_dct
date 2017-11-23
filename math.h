@@ -82,10 +82,12 @@ std::vector<double> lanczos (std::vector<double> values, int rfac, int size = 2)
         values.push_back(sin(i*M_PI/4));
     }
     int x = 0;
+
     for(int i = 0; i < rfac*values.size(); i++) {
         if (rfac <= 1) { result = values; break; }
         if (i%rfac == 0) {
-            result.push_back(values.at(i/(rfac)));
+            if(i/(rfac)-1 < 0) continue;
+            result.push_back(values.at(i/(rfac)-1));
             x = 0;
         } else {
             cout << 1.0/rfac << endl;
@@ -108,7 +110,7 @@ std::vector<double> lanczos (std::vector<double> values, int rfac, int size = 2)
     for(int i = 0; i < values.size(); i++) {
         cout << values.at(i) << ",";
     }
-    cout << "];" << endl;
+    cout << "];" << endl << "[";
     for(int i = 0; i < result.size(); i++) {
         cout << result.at(i) << ",";
     }
