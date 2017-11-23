@@ -14,11 +14,11 @@ chmod +x ./Arduino_dct
 Now these are the arguments you can configure
 -  -f: [string]  input file --> Define the file you want to apply a dct to. Format is a column of values
 -  -s: [integer] sample rate --> The samplerate which the values in your file where read, this is only important for x-axis scaling
--  -l: [integer] dct size --> The length of you dct window
+-  -l: [integer] dct size --> The length of the dct window
 -  -a: [integer] averaging --> Averages windows with x previously calculated windows
--  -q: [boolean] squareroot --> decide wether you want to squareroot the result or not. 
+-  -q: [boolean] squareroot --> decide wether you want to squareroot (absolute value) of the result or not. 
 -  -i: [boolean] include inverse --> calculate the inverse too. Only for validation
--  -d: [string] format --> choose the output format for the result files. This can be "own"(plots in gnuplot) or "matlab"
+-  -d: [string] format --> choose the output format for the result files. This can be "own" (plots in gnuplot) or "matlab"
 
 The first line is a transformation of a 156Hz square wave while the last is a transformation of a 5Khz square wave.
 
@@ -34,7 +34,7 @@ Here is a [paper](http://www.egr.msu.edu/waves/people/Ali_files/DCT_TR802.pdf) a
 ![Plot](https://github.com/stoertebeker23/arduino_dct/blob/master/documentation/compression.png)
 
 In this plot I tested multiple "compression factors". The first graph shows the original DCT of a signal and the inverse of that DCT. It is, except small deviation equal to the original signal.
-The second plot omit the last 86 values and replaces them with zeros. The third one only keeps 10(!) values and replaces the first 15 and the last 99 with zeros. Its now possible to see the compression loss pretty clearly. 
+The second plot omits the last 86 values and replaces them with zeros. The third one only keeps 10(!) values and replaces the first 15 and the last 99 with zeros. Its now possible to see the compression loss pretty clearly. 
 
 Now we have to think of ways to implement compression. If we use our own software, we could save chunks with information on how much of the window is ommitted and where the omission is happening.
 
