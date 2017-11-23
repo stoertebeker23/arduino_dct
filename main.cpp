@@ -20,6 +20,14 @@ std::string help = "Possible arguments:\n"
     "-q: squareroot\n"
     "-i: include inverse\n"
     "-d: format\n";
+    
+char* getArgValue(char** argv, int i) {
+    if(argv[i + 1][0] == '-') {
+        cout << "Error: No value specified for argument " << argv[i] << endl;
+        throw std::runtime_error("Error parsing command line arguments");
+    }
+    return argv[i + 1];
+}
 
 int main(int argc, char *argv[]) {
     if(argc < 2) {
@@ -35,25 +43,27 @@ int main(int argc, char *argv[]) {
     bool inverse = false;
     bool squareroot = false;
 
-    for(int i = 0; i < argc; i++) {
+    // First arg is our program name, skip it
+    // Last arg has to be a value for the previous arg, skip it
+    for(int i = 1; i < argc - 1; i++) {
         std::string arg = std::string(argv[i]);
         if(arg == "-f") {
-            filename = argv[i+1];
+            filename = getArgValue(argv, i);
         } else if (arg == "-s") {
-            sample_rate = atoi(argv[i+1]);
+            sample_rate = atoi(getArgValue(argv, i));
         } else if (arg == "-l") {
-            dct_size = atoi(argv[i+1]);
+            dct_size = atoi(getArgValue(argv, i));
         } else if (arg == "-h") {
             cout << help << endl;
             return 0;
         } else if (arg == "-a") {
-            averaging = atoi(argv[i+1]);
+            averaging = atoi(getArgValue(argv, i));
         } else if (arg == "-q") {
-            squareroot = atoi(argv[i+1]);
+            squareroot = atoi(getArgValue(argv, i));
         } else if (arg == "-i") {
-            inverse = atoi(argv[i+1]);
+            inverse = atoi(getArgValue(argv, i));
         } else if (arg == "-d") {
-            std::string format_raw = argv[i+1];
+            std::string format_raw = getArgValue(argv, i);
             
             if(format_raw == "own") {
                 format = Format::OWN;
@@ -69,6 +79,10 @@ int main(int argc, char *argv[]) {
 
     if(averaging) {
         cout << "averaging over " << averaging << " values" << endl;
+    }
+    
+    if(filename.empty()) {
+        cout << "Warning: no filename specified (argument: -f <filename>)." << endl;
     }
 
     std::ifstream _file(filename);
