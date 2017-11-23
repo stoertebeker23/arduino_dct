@@ -7,6 +7,7 @@ using std::vector;
 #include <sstream>
 #include <cmath>
 #include <stdexcept>
+
 #include "math.h"
 #include "output.h"
 
@@ -54,8 +55,6 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    cout << format << endl;
-    
     if(averaging) {
         cout << "averaging over " << averaging << " values" << endl;
     }
@@ -89,8 +88,7 @@ int main(int argc, char *argv[]) {
             if(averaging && transformed.size() > 1) {
                 vector<double> average = calc_avg(transformed, temp, averaging);
                 transformed.push_back(average);
-                
-                // std::cout << "averaged" << std::endl;
+
                 for(int i = 0; i < average.size(); i++) {
                     std::cout << average.at(i) << std::endl;
                 }
@@ -99,7 +97,7 @@ int main(int argc, char *argv[]) {
                 if(inverse) {
                     inverse_dct.push_back(inv);
                 }
-                // std::cout << "not averaged" << std::endl;
+
                 for(int i = 0; i < temp.size(); i++) {
                     std::cout << temp.at(i) << std::endl;
                 }
@@ -120,7 +118,7 @@ int main(int argc, char *argv[]) {
         std::cout << "No results written, is your dct window "
                      "longer than your file?" << std::endl;
     } else {
-        gnuplot_export(input, transformed, inverse_dct, sample_rate);
+        gnuplot_export(input, transformed, inverse_dct, sample_rate, format);
     }
     
     return 0;
