@@ -40,7 +40,7 @@ rm -r CMakeFiles
 rm CMakeCache.txt cmake_install.cmake Makefile
 
 # Testrun
-./Arduino_DCT -i ../signal_samples/squarewave -l 64
+./Arduino_DCT -f ../signal_samples/sinusoids -l 128 -s 10000
 
 
 # gnuplot
