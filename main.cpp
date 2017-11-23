@@ -119,6 +119,8 @@ int main(int argc, char *argv[]) {
                      "longer than your file?" << std::endl;
     } else {
         gnuplot_export(input, transformed, inverse_dct, sample_rate, format);
+        std::vector<double> lol;
+        lanczos(lol, 4, 2);
     }
     
     return 0;

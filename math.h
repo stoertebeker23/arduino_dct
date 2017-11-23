@@ -71,5 +71,49 @@ vector<double> calc_avg(const vector<vector<double>>& history,
 
     return result;
 }
+double sinc(double x) {
+    return (sin(M_PI*x)*2*sin(M_PI*x/2)/(M_PI*M_PI*x*x));
+}
+// Wow...I hope it works
+std::vector<double> lanczos (std::vector<double> values, int rfac, int size = 2) {
+    std::vector<double> result;
+    values.clear();
+    for(int i = 0; i < 32; i++) {
+        values.push_back(sin(i*M_PI/4));
+    }
+    int x = 0;
+    for(int i = 0; i < rfac*values.size(); i++) {
+        if (rfac <= 1) { result = values; break; }
+        if (i%rfac == 0) {
+            result.push_back(values.at(i/(rfac)));
+            x = 0;
+        } else {
+            cout << 1.0/rfac << endl;
+            x++;
+            double temp = 0;
+            for(int j = -size; j <= size; j++) {
+                if(!j) continue;
+                if(j < 0) {
+                    if((i/rfac+j) < 0) continue;
+                    temp += values.at(i/rfac+j)*sinc(x*1.0/rfac+abs(j)-1);
+                } else if(j > 0) {
+                    if(i/rfac+j-1 > values.size()-1) continue;
+                    temp += values.at(i/rfac+j-1)*sinc(abs(j)-x*1.0/rfac);
+                }
+            }
+            result.push_back(temp);
+        }
+    }
+    cout << "[";
+    for(int i = 0; i < values.size(); i++) {
+        cout << values.at(i) << ",";
+    }
+    cout << "];" << endl;
+    for(int i = 0; i < result.size(); i++) {
+        cout << result.at(i) << ",";
+    }
+    cout << "];" << endl;
+    return result;
+}
 
 #endif // MATH_H
