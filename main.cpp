@@ -1,3 +1,4 @@
+
 #include <iostream>
 using std::cout;
 using std::endl;
@@ -17,7 +18,8 @@ std::string help = "Possible arguments:\n"
     "-l: dct size\n"
     "-a: averaging\n"
     "-q: squareroot\n"
-    "-i: include inverse\n";
+    "-i: include inverse\n"
+    "-d: format\n";
 
 int main(int argc, char *argv[]) {
     if(argc < 2) {
@@ -29,7 +31,7 @@ int main(int argc, char *argv[]) {
     std::string filename;
     int dct_size = 16;
     int averaging = 0;
-    std::string format = "own";
+    Format format = Format::OWN;
     bool inverse = false;
     bool squareroot = false;
 
@@ -51,7 +53,17 @@ int main(int argc, char *argv[]) {
         } else if (arg == "-i") {
             inverse = atoi(argv[i+1]);
         } else if (arg == "-d") {
-            format = argv[i+1];
+            std::string format_raw = argv[i+1];
+            
+            if(format_raw == "own") {
+                format = Format::OWN;
+            } else if(format_raw == "matlab") {
+                format = Format::MATLAB;
+            } else {
+                cout << "Unsupported format: " << format_raw << endl
+                     << "Supported are: \"own\", \"matlab\"" << endl;
+                throw std::runtime_error("Unsupported format");
+            }
         }
     }
 
