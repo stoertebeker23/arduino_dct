@@ -2,3 +2,4 @@ build/Arduino_DCT
 CMakeLists.txt.user
 *.dct
 *.signal
+ui/build/*
