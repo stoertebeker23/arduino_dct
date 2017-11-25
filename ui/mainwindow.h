@@ -15,8 +15,10 @@ public:
 private:
     char inputText[1024 * 1024] = {};
     std::vector<double> inputParsed;
+    std::vector<std::vector<double>> transformed;
     
     void parseInput();
+    void calcDCT();
 };
 
 #endif /* MAINWINDOW_H */
