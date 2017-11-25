@@ -19,6 +19,7 @@ private:
     
     void parseInput();
     void calcDCT();
+    void drawGraphs();
 };
 
 #endif /* MAINWINDOW_H */

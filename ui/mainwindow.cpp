@@ -23,6 +23,10 @@ void MainWindow::draw() {
         parseInput();
         calcDCT();
     }
+    
+    drawGraphs();
+    
+    ImGui::ShowTestWindow();
         
     ImGui::End();
 }
@@ -62,7 +66,7 @@ void MainWindow::parseInput() {
 void MainWindow::calcDCT() {
     transformed.clear();
     
-    int sample_rate = 10000;
+    // int sample_rate = 10000;
     int dct_size = 16;
     int averaging = 0;
     bool inverse = false;
@@ -87,26 +91,11 @@ void MainWindow::calcDCT() {
             if(averaging && transformed.size() > 1) {
                 vector<double> average = calc_avg(transformed, temp, averaging);
                 transformed.push_back(average);
-
-                // for(size_t i = 0; i < average.size(); i++) {
-                //     std::cout << average.at(i) << std::endl;
-                // }
             } else {
                 transformed.push_back(temp);
                 if(inverse) {
                     inverse_dct.push_back(inv);
                 }
-
-                // for(size_t i = 0; i < temp.size(); i++) {
-                //     std::cout << temp.at(i) << std::endl;
-                // }
-                // if(inverse) {
-                //     std::cout << std::endl;
-                //     for(size_t i = 0; i < temp.size(); i++) {
-                //         std::cout << inv.at(i) << std::endl;
-                //     }
-                //     std::cout << std::endl;
-                // }
             }
             // clear window to fill it with new signal values
             dct_window.clear();
@@ -116,5 +105,31 @@ void MainWindow::calcDCT() {
     if(transformed.size() == 0) {
         std::cout << "No results written, is your dct window "
                      "longer than your file?" << std::endl;
+    }
+}
+
+// Function that reads data from a subvector of the transformed vector
+float values_getter(void* data, int index) {
+    double* d = (double*)data;
+    return d[index];
+}
+
+void MainWindow::drawGraphs() {
+    if(transformed.empty()) {
+        return;
+    }
+    
+    for(vector<double>& vec : transformed) {
+        const char* label = "DCT";
+        void* data = (void*)&vec[0];
+        int values_count = vec.size();
+        int values_offset = 0;
+        const char* overlay_text = NULL;
+        float scale_min = -1.f;
+        float scale_max = 1.f;
+        ImVec2 graph_size(0, 80);
+        
+        ImGui::PlotHistogram(label, values_getter, data, values_count, values_offset,
+                             overlay_text, scale_min, scale_max, graph_size);
     }
 }
