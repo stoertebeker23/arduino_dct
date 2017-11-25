@@ -1,7 +1,7 @@
 project(dct_ui)
 cmake_minimum_required(VERSION 2.8)
 
-SET (CMAKE_CXX_FLAGS "-Wall -std=c++11")
+SET (CMAKE_CXX_FLAGS "-Wall -std=c++11 -ldl")
 
 find_package(OpenGL)
 find_package(glfw3 3.2 REQUIRED)
@@ -28,7 +28,7 @@ set(SOURCES
 add_executable(dct_ui ${SOURCES})
 
 TARGET_LINK_LIBRARIES(dct_ui
-    
+    dl
 	glfw
 	${GLFW_LIBRARIES}
 	${OPENGL_LIBRARIES}
