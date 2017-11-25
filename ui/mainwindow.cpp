@@ -28,8 +28,12 @@ void MainWindow::draw() {
     
     // last two args are step and step_fast
     // ImGui::InputInt("Sample Rate", &dct_settings.sample_rate, 100, 1000);
-    ImGui::InputInt("Window Size", &dct_settings.window_size, 4, 64);
-    ImGui::InputInt("Averaging (0 = disabled)", &dct_settings.averaging, 1, 10);
+    if(ImGui::InputInt("Window Size", &dct_settings.window_size, 10, 100)) {
+        dct_settings.window_size = std::max(dct_settings.window_size, 0);
+    }
+    if(ImGui::InputInt("Averaging (0 = disabled)", &dct_settings.averaging, 10, 100)) {
+        dct_settings.averaging = std::max(dct_settings.averaging, 0);
+    }
     ImGui::Checkbox("Calculate Inverse", &dct_settings.inverse);
     ImGui::Checkbox("Squareroot (take absolute value)", &dct_settings.squareroot);
         
@@ -75,10 +79,8 @@ void MainWindow::parseInput() {
                 errno != 0 )   // error, overflow or underflow
             {
                 // fail
-                if(!errors.empty())
-                    errors += "\n";
                 errors += "Error in line " + std::to_string(line);
-                errors += " (\"" + s + "\" is not a valid number)";
+                errors += " (\"" + s + "\" is not a valid number)\n";
             } else {
                 // success
                 inputParsed.push_back(value);
@@ -98,6 +100,13 @@ void MainWindow::parseInput() {
 }
 
 void MainWindow::calcDCT() {
+    if(inputParsed.size() == 0) {
+        if(!errors.empty())
+            errors += "\n";
+        errors += "No input, nothing to do.\n";
+        return;
+    }
+    
     transformed.clear();
     
     // int sample_rate = 10000;
@@ -138,9 +147,8 @@ void MainWindow::calcDCT() {
 
     if(transformed.size() == 0) {
         if(!errors.empty())
-            errors += "\n\n";
-        
-        errors += "No results written, is your dct window longer than your file?";
+            errors += "\n";
+        errors += "No results written, is your dct window longer than your file?\n";
     }
 }
 
