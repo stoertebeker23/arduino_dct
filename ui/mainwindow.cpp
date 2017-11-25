@@ -6,6 +6,9 @@ using std::vector;
 #include <iostream>
 using std::cout;
 using std::endl;
+#include <cstdlib>
+using std::strtod;
+#include <cerrno>
 
 
 MainWindow::MainWindow() {}
@@ -19,7 +22,19 @@ void MainWindow::draw() {
         ImVec2(-1.0f, ImGui::GetTextLineHeight() * 16),
         ImGuiInputTextFlags_AllowTabInput);
         
+    if(!errors.empty()) {
+        ImGui::TextColored(ImVec4(1.0f, 0.2f, 0.2f, 1.0f), "%s", errors.c_str());
+    }
+    
+    // last two args are step and step_fast
+    // ImGui::InputInt("Sample Rate", &dct_settings.sample_rate, 100, 1000);
+    ImGui::InputInt("Window Size", &dct_settings.window_size, 4, 64);
+    ImGui::InputInt("Averaging (0 = disabled)", &dct_settings.averaging, 1, 10);
+    ImGui::Checkbox("Calculate Inverse", &dct_settings.inverse);
+    ImGui::Checkbox("Squareroot (take absolute value)", &dct_settings.squareroot);
+        
     if(ImGui::Button("Calculate DCT")) {
+        errors.clear();
         parseInput();
         calcDCT();
     }
@@ -37,6 +52,8 @@ void MainWindow::parseInput() {
     char c;
     std::string s;
     char* inputPtr = inputText;
+    int line = 1;
+    
     while(true) {
         c = *inputPtr++;
         
@@ -50,13 +67,30 @@ void MainWindow::parseInput() {
                 continue;
             }
             
-            const double value = std::atof(s.c_str());
-            inputParsed.push_back(value);
+            char* e;
+            errno = 0;
+            const double value = strtod(s.c_str(), &e);
+            
+            if (*e != '\0' ||  // error, we didn't consume the entire string
+                errno != 0 )   // error, overflow or underflow
+            {
+                // fail
+                if(!errors.empty())
+                    errors += "\n";
+                errors += "Error in line " + std::to_string(line);
+                errors += " (\"" + s + "\" is not a valid number)";
+            } else {
+                // success
+                inputParsed.push_back(value);
+            }
+            
             s.clear();
             
             if(c == '\0') {
                 break;
             }
+            
+            line++;
         } else {
             s += c;
         }
@@ -67,33 +101,33 @@ void MainWindow::calcDCT() {
     transformed.clear();
     
     // int sample_rate = 10000;
-    int dct_size = 16;
-    int averaging = 0;
-    bool inverse = false;
-    bool squareroot = false;
+    // int dct_size = 16;
+    // int averaging = 0;
+    // bool inverse = false;
+    // bool squareroot = false;
     
     vector<double> dct_window;
-    // vector<vector<double>> transformed;
-    vector<vector<double>> inverse_dct;
+    vector<vector<double>> inverse_dct;  // TODO make a private member
 
     for(size_t i = 0; i < inputParsed.size(); ++i) {
         // Read signal values to dct window...
         dct_window.push_back(inputParsed.at(i));
         // ...until window size is reached then...
-        if (i > 0 && i % dct_size == 0) {
-            vector<double> temp = dct(dct_window, false, squareroot);
+        if (i > 0 && i % dct_settings.window_size == 0) {
+            vector<double> temp = dct(dct_window, false, dct_settings.squareroot);
             vector<double> inv;
             
-            if(inverse) {
-                inv = dct(temp, true, squareroot);
+            if(dct_settings.inverse) {
+                inv = dct(temp, true, dct_settings.squareroot);
             }
             
-            if(averaging && transformed.size() > 1) {
-                vector<double> average = calc_avg(transformed, temp, averaging);
+            if(dct_settings.averaging && transformed.size() > 1) {
+                const int avg = dct_settings.averaging;
+                vector<double> average = calc_avg(transformed, temp, avg);
                 transformed.push_back(average);
             } else {
                 transformed.push_back(temp);
-                if(inverse) {
+                if(dct_settings.inverse) {
                     inverse_dct.push_back(inv);
                 }
             }
@@ -103,8 +137,10 @@ void MainWindow::calcDCT() {
     }
 
     if(transformed.size() == 0) {
-        std::cout << "No results written, is your dct window "
-                     "longer than your file?" << std::endl;
+        if(!errors.empty())
+            errors += "\n\n";
+        
+        errors += "No results written, is your dct window longer than your file?";
     }
 }
 
