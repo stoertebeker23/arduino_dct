@@ -15,7 +15,7 @@ public:
 private:
     struct DCT_Settings {
         int sample_rate = 10000;
-        int window_size = 16;
+        int window_size = 64;
         int averaging = 0;
         bool inverse = false;
         bool squareroot = false;
@@ -28,7 +28,6 @@ private:
     
     void parseInput();
     void calcDCT();
-    void drawGraphs();
 };
 
 #endif /* MAINWINDOW_H */

@@ -10,6 +10,11 @@ using std::endl;
 using std::strtod;
 #include <cerrno>
 
+// Function that reads data from a double vector
+float double_getter(void* data, int index) {
+    double* d = (double*)data;
+    return d[index];
+}
 
 MainWindow::MainWindow() {}
 
@@ -24,6 +29,21 @@ void MainWindow::draw() {
         
     if(!errors.empty()) {
         ImGui::TextColored(ImVec4(1.0f, 0.2f, 0.2f, 1.0f), "%s", errors.c_str());
+    }
+    
+    // Draw input graph
+    if(!inputParsed.empty()) {
+        const char* label = "Input";
+        void* data = (void*)&inputParsed[0];
+        int values_count = inputParsed.size();
+        int values_offset = 0;
+        const char* overlay_text = NULL;
+        float scale_min = -1.f;
+        float scale_max = 1.f;
+        ImVec2 graph_size(0, 80);
+        
+        ImGui::PlotHistogram(label, double_getter, data, values_count, values_offset,
+                             overlay_text, scale_min, scale_max, graph_size);
     }
     
     // last two args are step and step_fast
@@ -43,8 +63,24 @@ void MainWindow::draw() {
         calcDCT();
     }
     
-    drawGraphs();
+    // Draw result graphs
+    if(!transformed.empty()) {
+        for(vector<double>& vec : transformed) {
+            const char* label = "DCT";
+            void* data = (void*)&vec[0];
+            int values_count = vec.size();
+            int values_offset = 0;
+            const char* overlay_text = NULL;
+            float scale_min = -1.f;
+            float scale_max = 1.f;
+            ImVec2 graph_size(0, 80);
+            
+            ImGui::PlotHistogram(label, double_getter, data, values_count, values_offset,
+                                 overlay_text, scale_min, scale_max, graph_size);
+        }
+    }
     
+    // For debugging and learning imgui
     ImGui::ShowTestWindow();
         
     ImGui::End();
@@ -60,6 +96,10 @@ void MainWindow::parseInput() {
     
     while(true) {
         c = *inputPtr++;
+        
+        if(c == ' ' || c == '\t') {
+            continue;
+        }
         
         if(c == '\n' || c == '\0') {
             // Line or file end, try to parse a number
@@ -143,31 +183,5 @@ void MainWindow::calcDCT() {
         if(!errors.empty())
             errors += "\n";
         errors += "No results written, is your dct window longer than your file?\n";
-    }
-}
-
-// Function that reads data from a subvector of the transformed vector
-float values_getter(void* data, int index) {
-    double* d = (double*)data;
-    return d[index];
-}
-
-void MainWindow::drawGraphs() {
-    if(transformed.empty()) {
-        return;
-    }
-    
-    for(vector<double>& vec : transformed) {
-        const char* label = "DCT";
-        void* data = (void*)&vec[0];
-        int values_count = vec.size();
-        int values_offset = 0;
-        const char* overlay_text = NULL;
-        float scale_min = -1.f;
-        float scale_max = 1.f;
-        ImVec2 graph_size(0, 80);
-        
-        ImGui::PlotHistogram(label, values_getter, data, values_count, values_offset,
-                             overlay_text, scale_min, scale_max, graph_size);
     }
 }
