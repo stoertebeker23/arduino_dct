@@ -12,6 +12,7 @@ include_directories(deps/imgui-1.52/examples/libs/gl3w)
 set(SOURCES
 	main.cpp
 	mainwindow.cpp
+	utils.cpp
 	
 	../input.cpp
 	../output.cpp

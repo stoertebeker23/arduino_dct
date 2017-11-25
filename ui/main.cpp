@@ -10,7 +10,7 @@
 #include <vector>
 
 #include "mainwindow.h"
-#include "../input.h"
+#include "utils.h"
 
 static void error_callback(int error, const char* description)
 {
@@ -43,6 +43,7 @@ int main(int, char**)
     // Setup ImGui binding
     ImGui_ImplGlfwGL3_Init(window, true);
     
+    utils::darkTheme();
     MainWindow mainWindow;
 
     // Main loop
