@@ -1,6 +1,8 @@
 project(dct_ui)
 cmake_minimum_required(VERSION 2.8)
 
+SET (CMAKE_CXX_FLAGS "-Wall -std=c++11")
+
 find_package(OpenGL)
 find_package(glfw3 3.2 REQUIRED)
 
@@ -9,6 +11,12 @@ include_directories(deps/imgui-1.52/examples/libs/gl3w)
 
 set(SOURCES
 	main.cpp
+	mainwindow.cpp
+	
+	../input.cpp
+	../output.cpp
+	../dct.cpp
+	
 	imgui_impl_glfw_gl3.cpp
 	deps/imgui-1.52/imgui.cpp
 	deps/imgui-1.52/imgui_demo.cpp
