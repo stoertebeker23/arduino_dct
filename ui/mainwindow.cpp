@@ -29,7 +29,7 @@ void MainWindow::draw() {
     // last two args are step and step_fast
     // ImGui::InputInt("Sample Rate", &dct_settings.sample_rate, 100, 1000);
     if(ImGui::InputInt("Window Size", &dct_settings.window_size, 10, 100)) {
-        dct_settings.window_size = std::max(dct_settings.window_size, 0);
+        dct_settings.window_size = std::max(dct_settings.window_size, 1);
     }
     if(ImGui::InputInt("Averaging (0 = disabled)", &dct_settings.averaging, 10, 100)) {
         dct_settings.averaging = std::max(dct_settings.averaging, 0);
@@ -108,12 +108,6 @@ void MainWindow::calcDCT() {
     }
     
     transformed.clear();
-    
-    // int sample_rate = 10000;
-    // int dct_size = 16;
-    // int averaging = 0;
-    // bool inverse = false;
-    // bool squareroot = false;
     
     vector<double> dct_window;
     vector<vector<double>> inverse_dct;  // TODO make a private member
