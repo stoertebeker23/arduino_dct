@@ -4,7 +4,7 @@
 #include <imgui.h>
 #include "imgui_impl_glfw_gl3.h"
 #include <stdio.h>
-#include <GL/gl3w.h>    // This example is using gl3w to access OpenGL functions (because it is small). You may use glew/glad/glLoadGen/etc. whatever already works for you.
+#include <GL/gl3w.h>
 #include <GLFW/glfw3.h>
 
 static void error_callback(int error, const char* description)
@@ -21,26 +21,13 @@ int main(int, char**)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#if __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-    GLFWwindow* window = glfwCreateWindow(1280, 720, "ImGui OpenGL3 example", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(1280, 720, "DCT UI", NULL, NULL);
     glfwMakeContextCurrent(window);
     glfwSwapInterval(1); // Enable vsync
     gl3wInit();
 
     // Setup ImGui binding
     ImGui_ImplGlfwGL3_Init(window, true);
-
-    // Load Fonts
-    // (there is a default font, this is only if you want to change it. see extra_fonts/README.txt for more details)
-    //ImGuiIO& io = ImGui::GetIO();
-    //io.Fonts->AddFontDefault();
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/Cousine-Regular.ttf", 15.0f);
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/DroidSans.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/Roboto-Medium.ttf", 16.0f);
-    //io.Fonts->AddFontFromFileTTF("../../extra_fonts/ProggyTiny.ttf", 10.0f);
-    //io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\ArialUni.ttf", 18.0f, NULL, io.Fonts->GetGlyphRangesJapanese());
 
     bool show_test_window = true;
     bool show_another_window = false;
