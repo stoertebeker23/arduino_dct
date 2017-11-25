@@ -11,6 +11,7 @@ using std::vector;
 
 #include "dct.h"
 #include "output.h"
+#include "input.h"
 
 std::string help = "Possible arguments:\n"
     "-f: input file\n"
@@ -85,16 +86,9 @@ int main(int argc, char *argv[]) {
         cout << "Warning: no filename specified (argument: -f <filename>)." << endl;
     }
 
-    std::ifstream _file(filename);
-
-    if(!_file.good()) {
+    vector<double> input = readFile(filename);
+    if(input.empty()) {
         throw std::runtime_error("Could not read input file");
-    }
-    
-    vector<double> input;
-    std::string str;
-    while (std::getline(_file, str)) {
-        input.push_back(atof(str.c_str()));
     }
 
     vector<double> dct_window;
