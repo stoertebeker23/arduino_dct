@@ -12,11 +12,11 @@ vector<double> dct(vector<double> &values, bool invert, bool squareroot) {
     vector<double> result;
 
     // Calculate a result vector the same size as the input vector
-    for(int i = 0; i < values.size(); i++) {
+    for(size_t i = 0; i < values.size(); i++) {
 
         // Sum the size of the input window resulting in one result for the DCT
         double temp = 0;
-        for(int j = 0; j < values.size(); j++) {
+        for(size_t j = 0; j < values.size(); j++) {
             // Inversion of DCT is pretty much the same.
             if(!invert) {
                 temp += values.at(j) * cos((M_PI*i*(2*j+1)) / (values.size()*2));
@@ -51,10 +51,10 @@ vector<double> calc_avg(const vector<vector<double>>& history,
     // If we don't have enough values yet, use what's there (+ 1 because new values)
     avg_amount = std::min(avg_amount, history.size() + 1);
 
-    for (int i = 0; i < avg_amount; i++) {
+    for (size_t i = 0; i < avg_amount; i++) {
         const int index = history.size() - 1 - i;
 
-        if (index < 0 || index >= history.size()) {
+        if (index < 0 || index >= (int)history.size()) {
             break;
         }
 
@@ -63,7 +63,7 @@ vector<double> calc_avg(const vector<vector<double>>& history,
             cout << "ERROR: history and result size mismatch!" << endl;
         }
 
-        for (int j = 0; j < result.size(); j++) {
+        for (size_t j = 0; j < result.size(); j++) {
             result.at(j) += history.at(index).at(j);
         }
     }
@@ -89,7 +89,7 @@ std::vector<double> lanczos(std::vector<double> values, int rfac, int size) {
     }
     int x = 0;
 
-    for(int i = 0; i < rfac * values.size(); i++) {
+    for(size_t i = 0; i < rfac * values.size(); i++) {
         if (rfac <= 1) {
             result = values;
             break;
@@ -132,11 +132,11 @@ std::vector<double> lanczos(std::vector<double> values, int rfac, int size) {
     }
     
     cout << "[";
-    for(int i = 0; i < values.size(); i++) {
+    for(size_t i = 0; i < values.size(); i++) {
         cout << values.at(i) << ",";
     }
     cout << "];" << endl << "[";
-    for(int i = 0; i < result.size(); i++) {
+    for(size_t i = 0; i < result.size(); i++) {
         cout << result.at(i) << ",";
     }
     cout << "];" << endl;

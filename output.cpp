@@ -34,7 +34,7 @@ void gnuplot_export(const vector<double>& input,
             } else if(format == Format::MATLAB) {
                 dct_file << x_scaled << "," << d;
                 
-                if (x == window.size() - 1) {
+                if (x == (int)window.size() - 1) {
                     dct_file << "]";
                 } else {
                     dct_file << ";";
@@ -53,7 +53,7 @@ void gnuplot_export(const vector<double>& input,
         }
         
         x = 0;
-        for(int i = 0; i < window.size(); ++i, ++input_index) {
+        for(size_t i = 0; i < window.size(); ++i, ++input_index, ++x) {
             const double x_scaled = x * 1.0 / samplerate;
             
             if(format == Format::OWN) {
@@ -67,8 +67,6 @@ void gnuplot_export(const vector<double>& input,
                     signal_file << ";";
                 }
             }
-
-            x++;
         }
 
         window_num++;

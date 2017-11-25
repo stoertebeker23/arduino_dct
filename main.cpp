@@ -95,21 +95,23 @@ int main(int argc, char *argv[]) {
     vector<vector<double>> transformed;
     vector<vector<double>> inverse_dct;
 
-    for(int i = 0; i < input.size(); ++i) {
+    for(size_t i = 0; i < input.size(); ++i) {
         // Read signal values to dct window...
         dct_window.push_back(input.at(i));
         // ...until window size is reached then...
         if (i > 0 && i % dct_size == 0) {
             vector<double> temp = dct(dct_window, false, squareroot);
             vector<double> inv;
+            
             if(inverse) {
                 inv = dct(temp, true, squareroot);
             }
+            
             if(averaging && transformed.size() > 1) {
                 vector<double> average = calc_avg(transformed, temp, averaging);
                 transformed.push_back(average);
 
-                for(int i = 0; i < average.size(); i++) {
+                for(size_t i = 0; i < average.size(); i++) {
                     std::cout << average.at(i) << std::endl;
                 }
             } else {
@@ -118,12 +120,12 @@ int main(int argc, char *argv[]) {
                     inverse_dct.push_back(inv);
                 }
 
-                for(int i = 0; i < temp.size(); i++) {
+                for(size_t i = 0; i < temp.size(); i++) {
                     std::cout << temp.at(i) << std::endl;
                 }
                 if(inverse) {
                     std::cout << std::endl;
-                    for(int i = 0; i < temp.size(); i++) {
+                    for(size_t i = 0; i < temp.size(); i++) {
                         std::cout << inv.at(i) << std::endl;
                     }
                     std::cout << std::endl;
