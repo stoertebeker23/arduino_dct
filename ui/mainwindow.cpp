@@ -52,6 +52,14 @@ void MainWindow::draw() {
     if(ImGui::InputInt("Window Size", &dct_settings.window_size, 10, 100)) {
         dct_settings.window_size = std::max(dct_settings.window_size, 1);
     }
+    ImGui::SameLine();
+    if(ImGui::Button("To Input Size")) {
+        parseInput();
+        if(!inputParsed.empty()) {
+            dct_settings.window_size = inputParsed.size();
+        }
+    }
+    
     if(ImGui::InputInt("Averaging (0 = disabled)", &dct_settings.averaging, 10, 100)) {
         dct_settings.averaging = std::max(dct_settings.averaging, 0);
     }
