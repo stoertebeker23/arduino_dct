@@ -86,7 +86,7 @@ int main(int argc, char *argv[]) {
         cout << "Warning: no filename specified (argument: -f <filename>)." << endl;
     }
 
-    vector<double> input = readFile(filename);
+    vector<double> input = parseFile(filename);
     if(input.empty()) {
         throw std::runtime_error("Could not read input file");
     }

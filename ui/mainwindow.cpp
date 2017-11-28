@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "imgui_impl_glfw_gl3.h"
 #include "../dct.h"
+#include "../input.h"
 
 using std::vector;
 #include <iostream>
@@ -87,56 +88,7 @@ void MainWindow::draw() {
 }
 
 void MainWindow::parseInput() {
-    inputParsed.clear();
-    
-    char c;
-    std::string s;
-    char* inputPtr = inputText;
-    int line = 1;
-    
-    while(true) {
-        c = *inputPtr++;
-        
-        if(c == ' ' || c == '\t') {
-            continue;
-        }
-        
-        if(c == '\n' || c == '\0') {
-            // Line or file end, try to parse a number
-            if(s.empty()) {
-                // This line did not contain anything
-                if(c == '\0') {
-                    break;
-                }
-                continue;
-            }
-            
-            char* e;
-            errno = 0;
-            const double value = strtod(s.c_str(), &e);
-            
-            if (*e != '\0' ||  // error, we didn't consume the entire string
-                errno != 0 )   // error, overflow or underflow
-            {
-                // fail
-                errors += "Error in line " + std::to_string(line);
-                errors += " (\"" + s + "\" is not a valid number)\n";
-            } else {
-                // success
-                inputParsed.push_back(value);
-            }
-            
-            s.clear();
-            
-            if(c == '\0') {
-                break;
-            }
-            
-            line++;
-        } else {
-            s += c;
-        }
-    }
+    inputParsed = parseString(inputText, &errors);
 }
 
 void MainWindow::calcDCT() {
